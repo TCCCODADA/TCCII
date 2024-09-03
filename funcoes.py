@@ -36,8 +36,53 @@ def MM_ema(lista_acoes): # EMA tambem conhecida como Media Movel Exponencial
 # def MM_rsi():
 
 # MACD
-# def MM_macd():
+def MM_macd(lista_acoes):
 
+    short_window = 12
+    long_window = 24 
+    signal_window = 9
+
+    for acao in lista_acoes:
+        df = pd.read_csv("Base_dados/hist_"+acao)     
+        
+
+        #Cálculo das EMAs de curto e longo prazo
+        df['EMA12'] = df['Close'].ewm(span=short_window, adjust=False).mean()
+        df['EMA26'] = df['Close'].ewm(span=long_window, adjust=False).mean()
+        
+        # Cálculo da linha MACD
+        df['MACD'] = df['EMA12'] - df['EMA26']
+        
+        # Cálculo da linha de sinal
+        df['Signal_Line'] = df['MACD'].ewm(span=signal_window, adjust=False).mean()
+        
+        # Cálculo do histograma
+        df['Histogram'] = df['MACD'] - df['Signal_Line']
+        
+        
+
+        # Exemplo de DataFrame com preços de fechamento
+        data = {'Close': [100, 102, 105, 103, 108, 110, 107, 105, 103, 102]}
+        df = pd.DataFrame(data)
+
+        # Aplicar o MACD
+        # df = MM_macd(df)
+        print(df)
+        return df
+        df_ema.to_csv("Base_dados/hist_"+acao)
+lista_acoes = [    
+    'PETR4.SA',    # Petrobras
+    'TAEE11.SA',   # Taesa    
+    'NVDA',        # Nvidia
+    'BBAS3.SA',    # Bradesco
+    'NFLX',        # Netflix     
+    'EA',          # EA
+    'TSLA']        # Tesla
+
+data_inicio = '2020-01-01' # data de inicio do historico que voce deseja obter
+data_fim = '2023-12-31'    # data final do perido para o historico
+# FORMATO-> "AAAA-MM-DD" 
+MM_macd(lista_acoes)
 # Bollinger Bands
 # def MM_bb():
 

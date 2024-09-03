@@ -36,7 +36,9 @@ def MM_ema(lista_acoes): # EMA tambem conhecida como Media Movel Exponencial
 # def MM_rsi():
 
 # MACD
-# def MM_macd():
+def MM_macd(lista_acoes):
+    
+
 
 # Bollinger Bands
 # def MM_bb():

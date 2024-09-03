@@ -39,7 +39,16 @@ def MM_ema(lista_acoes): # EMA tambem conhecida como Media Movel Exponencial
 # def MM_macd():
 
 # Bollinger Bands
-# def MM_bb():
+def MM_bb(lista_acoes):
+     for acao in lista_acoes:
+        df_bb = pd.read_csv("Base_dados/hist_"+acao, index_col = False)
+        #df_bb.ta.bbands(df_bb['Close'], length=10, std=2, ddof=0, mamode=None, talib=None, offset=None)
+
+        BB = ta.bbands(df_bb['Close'], length=20, std=2, ddof=0, mamode=None, talib=None, offset=None)
+        combined_data = pd.concat([df_bb, BB], axis=1)
+        combined_data.to_csv("Base_dados/hist_"+acao,index=False)
+        
+
 
 # Average True Range
 # def MM_atr():

@@ -41,7 +41,9 @@ def MM_rsi(lista_acoes):
 
 
 # MACD
-# def MM_macd():
+def MM_macd(lista_acoes):
+    
+
 
 # Bollinger Bands
 # def MM_bb():

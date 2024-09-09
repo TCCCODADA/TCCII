@@ -41,9 +41,7 @@ def MM_rsi(lista_acoes):
 
 
 # MACD
-def MM_macd(lista_acoes):
-    
-
+# def MM_macd(lista_acoes):
 
 # Bollinger Bands
 # def MM_bb():
@@ -64,7 +62,21 @@ def MM_atr(lista_acoes): # AVERAGE TRUE RANGE (ATR) nos mostra a volatilidade de
 
 
 # Estocastico
-# def MM_estc():
+def MM_estc(lista_acoes): # AQUI OBTEMOS O INDICADOR ESTOCASTICO, GERANDO DUAS COLUNAS
 
-# Dados fundamentalista
+    for acao in lista_acoes:
+        df_estc = pd.read_csv("Base_dados/hist_"+acao)
+
+        stoch = ta.stoch(high=df_estc['High'],
+                        low = df_estc['Low'],
+                        close = df_estc['Close'],
+                        k=14, # 14 PERIODOS PARA CALCULAR O "K" (REPRESENTA SE O PRECO DE FECHAMENTO ESTA ALTO OU BAIXO COMPARADO COM OS VALORES HISTORICOS NO PERIODO INDICADO)
+                        d=3)  # 3 PERIODOS PARA CALCULA O "D" (MÉDIA MOVEL SIMPLES DE "K")
+        
+        df_estc['stoch_k'] = stoch["STOCHk_14_3_3"] # COLOCAMOS ESSES VALORES NO DF DA ACAO
+        df_estc['stoch_d'] = stoch["STOCHd_14_3_3"]
+        
+        df_estc.to_csv("Base_dados/hist_"+acao)
+
+# Dados fundamentalistas
 # def MM_fund():

@@ -33,7 +33,12 @@ def MM_ema(lista_acoes): # EMA tambem conhecida como Media Movel Exponencial
         df_ema.to_csv("Base_dados/hist_"+acao)
 
 # RSI
-# def MM_rsi():
+def MM_rsi(lista_acoes):
+
+    for acao in lista_acoes:
+        df_rsi = pd.read_csv("Base_dados/hist_"+acao)
+        df_rsi.ta.rsi()
+
 
 # MACD
 # def MM_macd():
@@ -42,7 +47,19 @@ def MM_ema(lista_acoes): # EMA tambem conhecida como Media Movel Exponencial
 # def MM_bb():
 
 # Average True Range
-# def MM_atr():
+def MM_atr(lista_acoes): # AVERAGE TRUE RANGE (ATR) nos mostra a volatilidade de um ativo em um determinado periodo (HIGH vs LOW de um dia)
+
+    for acao in lista_acoes:
+        df_rsi = pd.read_csv("Base_dados/hist_"+acao)
+
+        df_rsi.ta.atr(high = df_rsi['High'],
+                      low = df_rsi['Low'],
+                      close = df_rsi['Close'],
+                      lenght = 10,
+                      append=True)
+
+        df_rsi.to_csv("Base_dados/hist_"+acao)
+
 
 # Estocastico
 # def MM_estc():

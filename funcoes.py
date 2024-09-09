@@ -35,11 +35,15 @@ def MM_ema(lista_acoes): # EMA tambem conhecida como Media Movel Exponencial
         df_ema.to_csv("Base_dados/hist_"+acao)
 
 # RSI
-def MM_rsi(lista_acoes):
+def MM_rsi(lista_acoes): # AQUI OBTEMOS O INDICADOR RSI (RELATIVE STRENGTH INDEX ou INDICE DE FORCA RELATIVA)
+
+    """
+    ESSE INDICADOR MEDE A VELOCIDADE E OS MOVIMENTOS DOS PREÇOS DE FECHAMENTO, SENDO BOM PARA DETECCAO DE REVERSOES DE PRECOS 
+    """
 
     for acao in lista_acoes:
-        df_rsi = pd.read_csv("Base_dados/hist_"+acao, index_col=0)
-        df_rsi["RSI_10"] = ta.rsi(close = df_rsi["Close"],
+        df_rsi = pd.read_csv("Base_dados/hist_"+acao)
+        df_rsi["RSI_10"] = ta.rsi(close = df_rsi["Close"], # UTILIZA A COLUNA DE FECHAMENTO
                                 length = 10,
                                 append = True)
     
@@ -47,16 +51,39 @@ def MM_rsi(lista_acoes):
 
 
 # MACD
-# def MM_macd(lista_acoes):
+# def MM_macd(lista_acoes):        
 
 # Bollinger Bands
-# def MM_bb():
+def MM_bb(lista_acoes): # BOLINGER BANDS nos ajuda a medir a volatilidade do ativo
+
+    for acao in lista_acoes:
+        df_bb = pd.read_csv("Base_dados/hist_"+acao)   
+        
+        df_bb.ta.bbands(close = df_bb['Close'],
+                                length = 20,
+                                append = True)        
+        """
+        ESTRUTURA DO INDICADOR:
+            BBM(BOLLINGER BAND MIDDLE) = MEDIA MOVEL DO PRECO DE FECHAMENTO 
+            BBU(BOLLINGER BAND UPPER) =  BBM + 2 DESVIOS PADRAO PARA CIMA
+            BBL(BOLLINGER BAND LOWER) =  BBM + 2 DESVIOS PADRAO PARA BAIXO
+
+        NOS RETORNA 5 COLUNAS:
+            BBL_20_2.0 = RETORNA O "BBL" PARA 20 PERIODOS            
+            BBM_20_2.0 = RETORNA O "BBM" PARA 20 PERIODOS
+            BBU_20_2.0 = RETORNA O "BBU" PARA 20 PERIODOS
+            BBB_20_2.0 = RETORNA A DIFERENCA PERCENTUAL ENTRE AS BANDAS SUPERIOR E INFERIOR (BANDWIDTH)
+            BBP_20_2.0 = RETORNA A POSICAO RELATIVA DO PRECO DE FECHAMENTO EM RELACAO AS BANDAS SUPERIOR E INFERIOR, NORMALIZANDO O PRECO DENTRO
+              DA FAIXA BBU - BBL
+        """
+        
+        df_bb.to_csv("Base_dados/hist_"+acao)
 
 # Average True Range
 def MM_atr(lista_acoes): # AVERAGE TRUE RANGE (ATR) nos mostra a volatilidade de um ativo em um determinado periodo (HIGH vs LOW de um dia)
 
     for acao in lista_acoes:
-        df_rsi = pd.read_csv("Base_dados/hist_"+acao, index_col=0)
+        df_rsi = pd.read_csv("Base_dados/hist_"+acao)
         df_rsi.ta.atr(high = df_rsi['High'],
                       low = df_rsi['Low'],
                       close = df_rsi['Close'],
@@ -70,7 +97,7 @@ def MM_atr(lista_acoes): # AVERAGE TRUE RANGE (ATR) nos mostra a volatilidade de
 def MM_estc(lista_acoes): # AQUI OBTEMOS O INDICADOR ESTOCASTICO, GERANDO DUAS COLUNAS
 
     for acao in lista_acoes:
-        df_estc = pd.read_csv("Base_dados/hist_"+acao, index_col=0)
+        df_estc = pd.read_csv("Base_dados/hist_"+acao)
         stoch = ta.stoch(high=df_estc['High'],
                         low = df_estc['Low'],
                         close = df_estc['Close'],
@@ -81,6 +108,3 @@ def MM_estc(lista_acoes): # AQUI OBTEMOS O INDICADOR ESTOCASTICO, GERANDO DUAS C
         df_estc['stoch_d'] = stoch["STOCHd_14_3_3"]
         
         df_estc.to_csv("Base_dados/hist_"+acao)
-
-# Dados fundamentalistas
-# def MM_fund():

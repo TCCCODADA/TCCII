@@ -51,7 +51,38 @@ def MM_rsi(lista_acoes): # AQUI OBTEMOS O INDICADOR RSI (RELATIVE STRENGTH INDEX
 
 
 # MACD
-# def MM_macd(lista_acoes):        
+def MM_macd(lista_acoes):
+
+    short_window = 12
+    long_window = 26 
+    signal_window = 9
+
+    for acao in lista_acoes:
+        df = pd.read_csv("Base_dados/hist_"+acao)     
+        df_MM_MACD = pd.read_csv("Base_dados/hist_"+acao)  
+
+        #Cálculo das EMAs de curto e longo prazo
+        df_MM_MACD['EMA12'] = df['Close'].ewm(span=short_window, adjust=False).mean()
+        df_MM_MACD['EMA26'] = df['Close'].ewm(span=long_window, adjust=False).mean()
+        
+        # Cálculo da linha MACD
+        # é a diferença entre a EMA de curto prazo (12) e a EMA de longo prazo (26).
+        #  Quando essa diferença é positiva, indica uma tendência de alta, e quando é negativa,
+        #  uma tendência de baixa.
+        df['MACD'] = df_MM_MACD['EMA12'] - df_MM_MACD['EMA26']
+        
+        # Cálculo da linha de sinal
+        #é a EMA de 9 períodos do MACD. Ela serve como um suavizador para o MACD, indicando quando entrar ou sair de uma tendência.
+        df_MM_MACD['Signal_Line'] = df['MACD'].ewm(span=signal_window, adjust=False).mean()
+        
+        # Cálculo do histograma
+        # O histograma representa a diferença entre o MACD e a linha de sinal. Ele ajuda a visualizar o momento da tendência,
+        #  sendo positivo quando o MACD está acima da linha de sinal (indicando força de compra) e negativo quando o MACD está
+        #  abaixo (indicando força de venda).
+        df['MACD_Histogram'] = df['MACD'] - df_MM_MACD['Signal_Line']
+
+
+        df.to_csv("Base_dados/hist_"+acao)      
 
 # Bollinger Bands
 def MM_bb(lista_acoes): # BOLINGER BANDS nos ajuda a medir a volatilidade do ativo

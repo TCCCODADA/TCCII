@@ -49,7 +49,6 @@ def MM_rsi(lista_acoes): # AQUI OBTEMOS O INDICADOR RSI (RELATIVE STRENGTH INDEX
     
         df_rsi.to_csv("Base_dados/hist_"+acao)
 
-
 # MACD
 def MM_macd(lista_acoes):
 

@@ -1,0 +1,110 @@
+
+years = df['Date'].dt.year.unique()
+
+mses = []
+maes = []
+mses_geral = []
+maes_geral = []
+std_mses_geral =[]
+std_maes_geral = []
+for i in range (10): 
+    print("Loop: ", i)
+    
+    for year in years[:-1]:  # Excluindo o último ano para ter dados para testar
+        # Dados de treinamento até o ano atual
+        train_data = df[df['Date'].dt.year <= year]
+        test_data = df[df['Date'].dt.year == year+1]
+        
+        if len(test_data) < window_size:
+            continue  # Pula se não houver dados suficientes para testar
+        
+        # Preparar dados de treinamento
+        X_train = train_data[features].values
+        y_train = train_data[target].values
+        X_train_scaled = scaler.fit_transform(X_train)
+        
+        X_train_seq = []
+        y_train_seq = []
+        for i in range(window_size, len(X_train_scaled)):
+            X_train_seq.append(X_train_scaled[i-window_size:i])
+            y_train_seq.append(y_train[i])
+        X_train_seq = np.array(X_train_seq)
+        y_train_seq = np.array(y_train_seq)
+        
+        # Preparar dados de teste
+        X_test = test_data[features].values
+        y_test = test_data[target].values
+        X_test_scaled = scaler.transform(X_test)
+        
+        X_test_seq = []
+        y_test_seq = []
+        for i in range(window_size, len(X_test_scaled)):
+            X_test_seq.append(X_test_scaled[i-window_size:i])
+            y_test_seq.append(y_test[i])
+        X_test_seq = np.array(X_test_seq)
+        y_test_seq = np.array(y_test_seq)
+        
+        # Verificar se há dados suficientes
+        if X_train_seq.shape[0] == 0 or X_test_seq.shape[0] == 0:
+            continue
+        
+        model = Sequential()
+
+        # Primeira camada Conv1D
+        model.add(Conv1D(filters=64, kernel_size=3, activation='relu', padding='same',
+                         input_shape=(X_train_seq.shape[1], X_train_seq.shape[2])))
+
+        # Segunda camada Conv1D
+        model.add(Conv1D(filters=128, kernel_size=3, activation='relu', padding='same'))
+
+        # Terceira camada Conv1D
+        model.add(Conv1D(filters=256, kernel_size=3, activation='relu', padding='same'))
+
+        # Camada Flatten
+        model.add(Flatten())
+
+        # Camada densa
+        model.add(Dense(100, activation='relu'))
+
+        # Camada de saída
+        model.add(Dense(1))
+
+        # Compilação do modelo
+        model.compile(optimizer='adam', loss='mse')
+
+        # Treinamento do modelo
+        model.fit(X_train_seq, y_train_seq, epochs=20, batch_size=32, verbose=1)
+        
+        # Fazer previsões
+        y_pred = model.predict(X_test_seq)
+        
+        # Calcular métricas
+        mse = mean_squared_error(y_test_seq, y_pred)
+        mae = mean_absolute_error(y_test_seq, y_pred)
+        mses.append(mse)
+        maes.append(mae)
+        
+        # print(f'Ano {year+1}: MSE = {mse}, MAE = {mae}')
+
+    mean_mse = np.mean(mses)
+    std_mse = np.std(mses)
+    mean_mae = np.mean(maes)
+    std_mae = np.std(maes)
+    mses_geral.append(mean_mse)
+    std_mses_geral.append(std_mse)
+    maes_geral.append(mean_mae)
+    std_maes_geral.append(std_mae)
+
+mean_mse_final = np.mean(mses_geral)
+std_mse_final = np.std(std_mses_geral)
+mean_mae_final = np.mean(maes_geral)
+std_mae_final = np.std(std_maes_geral)
+print(f'
+Média MSE: {mean_mse_final}, Desvio Padrão MSE: {std_mse_final}')
+print(f'Média MAE: {mean_mae_final}, Desvio Padrão MAE: {std_mae_final}')
+            
+# Média MSE: 943.0044320935613, Desvio Padrão MSE: 214.6488998805015
+# Média MAE: 22.229090372977968, Desvio Padrão MAE: 2.0232980342977402
+
+
+            

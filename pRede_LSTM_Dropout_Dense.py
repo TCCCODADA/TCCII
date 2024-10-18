@@ -31,16 +31,16 @@ for arq in lista_arquivos:
     base_30 = df.iloc[indice_divisao:]
 
     # Salvar os primeiros 70% em outro arquivo CSV
-    if os.path.exists(f'Bases_Rede/{arq}/{arq}_Training.csv'):
-        os.remove(f'Bases_Rede/{arq}/{arq}_Training.csv')
-    base_70.to_csv(f'Bases_Rede/{arq}/{arq}_Training.csv', index=False)
+    if os.path.exists(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv'):
+        os.remove(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv')
+    base_70.to_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv', index=False)
 
     # Salvar os últimos 30% em um novo arquivo CSV
-    if os.path.exists(f'Bases_Rede/{arq}/{arq}_Test.csv'):
-        os.remove(f'Bases_Rede/{arq}/{arq}_Test.csv')
-    base_30.to_csv(f'Bases_Rede/{arq}/{arq}_Test.csv', index=False)
+    if os.path.exists(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv'):
+        os.remove(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv')
+    base_30.to_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv', index=False)
 
-    base = pd.read_csv(f'Bases_Rede/{arq}/{arq}_Training.csv')
+    base = pd.read_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv')
 
     # Coluna "OPEN" será utilizada para realizar as previsões
     base_treinamento = base.iloc[:, 1:2].values
@@ -80,16 +80,22 @@ for arq in lista_arquivos:
     # Camada Dense (Totalmente Conectada)
     regressor.add(Dense(units=1, activation='linear'))
 
+    camadas = []
+    camadas.append("LSTM")
+    camadas.append("Dropout")
+    camadas.append("Dense")
+
     # Compilação do modelo
     regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
 
-    # Treinamento
+    # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
-    regressor.fit(X, y, epochs=50, batch_size=32)
+    treinamento = regressor.fit(X, y, epochs=5, batch_size=32)
+    epoca = len(treinamento.epoch)
 
 
-    # ===== PREVISÕES DOS PREÇOS DAS AÇÕES ===== #
-    base_teste = pd.read_csv(f'Bases_Rede/{arq}/{arq}_Test.csv')
+    # ========== PREVISÕES DOS PREÇOS DAS AÇÕES ========== #
+    base_teste = pd.read_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv')
     y_teste = base_teste.iloc[:, 1:2].values
 
     # Juntando as duas bases em uma só
@@ -185,31 +191,27 @@ for arq in lista_arquivos:
         'Coeficiente de Determinação (R²)': r2,
         'Erro Percentual Absoluto Médio (MAPE) (%)': mape,
         'Acurácia (%)': acuracia,
-        'Valores Iguais?': igual_ou_nao
+        'Valores Iguais?': igual_ou_nao.flatten()
     })
 
-    nome_arquivo_resultado = f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv'
+    nome_arquivo_resultado = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}.csv'
     count_res = 1
 
     while os.path.exists(nome_arquivo_resultado):
-        nome_arquivo_resultado = f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}_{count_res}.csv'
+        nome_arquivo_resultado = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{count_res}.csv'
         count_res += 1
 
     resultados.to_csv(nome_arquivo_resultado, index=False)
 
-    nome_arquivo_foto = f'Bases_Rede/{arq}/Previsao_{arq}.png'
+    nome_arquivo_foto = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}.png'
     count_fot = 1
 
-    # Salvar o gráfico em um arquivo
-    if os.path.exists(f'Bases_Rede/{arq}/Previsao_{arq}.png'):
-        while os.path.exists(nome_arquivo_foto):
-            nome_arquivo_foto = f'Bases_Rede/{arq}/Previsao_{arq}_{count_fot}.png'
-            count_fot += 1
-    else:
-        plt.savefig(f'Bases_Rede/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  
+    while os.path.exists(nome_arquivo_foto):
+        nome_arquivo_foto = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{count_fot}.png'
+        count_fot += 1
         
     plt.savefig(nome_arquivo_foto, dpi=300, bbox_inches='tight')
-    # plt.savefig(f'Bases_Rede/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução   
+    # plt.savefig(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução   
 
     # plt.show()
 

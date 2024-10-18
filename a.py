@@ -1,6 +1,7 @@
 import numpy as np                  # Biblioteca para manipulação de arrays e operações matemáticas eficientes.
 import pandas as pd                 # Biblioteca para manipulação e análise de dados, especialmente útil para trabalhar com dados em tabelas (DataFrames).
 import matplotlib.pyplot as plt     # Biblioteca para criar gráficos e visualizações de dados.
+import matplotlib.dates as mdates   # Biblioteca para manipulação e formatação de datas e tempos em gráficos matplotlib.
 import tensorflow as tf             # Biblioteca para construir e treinar redes neurais e outros modelos de Machine Learning.
 import sklearn                      # Biblioteca para tarefas de Machine Learning, incluindo pré-processamento de dados, modelos e métricas de avaliação.
 
@@ -83,8 +84,8 @@ for arq in lista_arquivos:
     regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
 
     # Treinamento
-    print(f"\nIniciando Treinamento: {arq} - {lista_arquivos[arq+1]}")
-    regressor.fit(X, y, epochs=20, batch_size=32)
+    print(f"\nIniciando Treinamento: {arq}")
+    regressor.fit(X, y, epochs=50, batch_size=32)
 
 
     # ===== PREVISÕES DOS PREÇOS DAS AÇÕES ===== #
@@ -134,62 +135,81 @@ for arq in lista_arquivos:
     acuracia = 100 - mape
     print(f"{arq} - Acurácia: {acuracia:.2f}%")
 
-    # Salvando previsões e métricas em um arquivo CSV
-    resultados = pd.DataFrame({
-        'Preço Real': y_teste.flatten(),
-        'Preços Previstos': previsoes.flatten(),
-        'Erro Absoluto': np.abs(y_teste.flatten() - previsoes.flatten()),
-        'Erro Percentual': (np.abs(y_teste.flatten() - previsoes.flatten()) / y_teste.flatten()) * 100
-    })
-    if os.path.exists(f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv'):
-        os.remove(f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv')
-    resultados.to_csv(f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv', index=False)
+    # Garantir que a coluna 'Date' esteja no formato datetime
+    base_teste['Date'] = pd.to_datetime(base_teste['Date'])
 
-    plt.figure(figsize=(10, 6))  # Ajuste a largura para 10 e altura para 6
+    plt.figure(figsize=(15, 6))  # Ajuste a largura para 10 e altura para 6
     plt.plot(base_teste['Date'], y_teste, color= 'blue', label= 'Preço Real')
     plt.plot(base_teste['Date'], previsoes, color= 'red', label= 'Preços Previstos')
-    plt.title(f"Previsões dos Preços das Ações {arq}")
+    plt.title(f"Previsões dos Preços das Ações {arq[5:]}")
     plt.xlabel("Tempo")
     plt.ylabel("Valor")
+
+    # Configurar o eixo X para exibir datas corretamente
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))  # Exibir no formato "Ano-Mês"
+    plt.gca().xaxis.set_major_locator(mdates.MonthLocator())  # Colocar um marcador por mês
+    plt.gcf().autofmt_xdate()  # Rotaciona as etiquetas das datas para melhor legibilidade
+
     plt.legend(loc='upper left')  # Ajuste da posição da legenda para o canto superior esquerdo
 
 
     # Adicionar texto com os indicadores
     textstr = '\n'.join((
-        f"Erro Médio Absoluto (MAE): {mae:.4f}",
-        f"Erro Quadrático Médio (MSE): {mse:.4f}",
-        f"Coeficiente de Determinação (R²): {r2:.4f}",
-        f"Erro Percentual Absoluto Médio (MAPE): {mape:.2f}%",
+        f"MAE - Erro Médio Absoluto: {mae:.4f}",
+        f"MSE - Erro Quadrático Médio: {mse:.4f}",
+        f"R² - Coeficiente de Determinação: {r2:.4f}",
+        f"MAPE - Erro Percentual Absoluto Médio: {mape:.2f}%",
         f"Acurácia: {acuracia:.2f}%"
     ))
 
     # Definir a posição do texto no gráfico (mais ao lado para não sobrepor o gráfico)
-    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.4)
     plt.gca().text(1.05, 0.5, textstr, transform=plt.gca().transAxes, fontsize=10,
                 verticalalignment='center', bbox=props)
 
     # Ajuste o layout para que tudo fique bem visível
     plt.tight_layout()
 
+    datas_teste = base_teste.iloc[:, 0:1].values
+    igual_ou_nao = previsoes == y_teste
+
+    # Salvando previsões e métricas em um arquivo CSV
+    resultados = pd.DataFrame({
+        'Data': datas_teste.flatten(),
+        'Preço Real': y_teste.flatten(),
+        'Preços Previstos': previsoes.flatten(),
+        'Erro Absoluto': np.abs(y_teste.flatten() - previsoes.flatten()),
+        'Erro Percentual': (np.abs(y_teste.flatten() - previsoes.flatten()) / y_teste.flatten()) * 100,
+        'Erro Médio Absoluto (MAE)': mae,
+        'Erro Quadrático Médio (MSE)': mse,
+        'Coeficiente de Determinação (R²)': r2,
+        'Erro Percentual Absoluto Médio (MAPE) (%)': mape,
+        'Acurácia (%)': acuracia,
+        'Valores Iguais?': igual_ou_nao
+    })
+
+    nome_arquivo_resultado = f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv'
+    count_res = 1
+
+    while os.path.exists(nome_arquivo_resultado):
+        nome_arquivo_resultado = f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}_{count_res}.csv'
+        count_res += 1
+
+    resultados.to_csv(nome_arquivo_resultado, index=False)
 
     nome_arquivo_foto = f'Bases_Rede/{arq}/Previsao_{arq}.png'
-    count = 1
+    count_fot = 1
 
     # Salvar o gráfico em um arquivo
     if os.path.exists(f'Bases_Rede/{arq}/Previsao_{arq}.png'):
         while os.path.exists(nome_arquivo_foto):
-            nome_arquivo_foto = f'Bases_Rede/{arq}/Previsao_{arq}_{count}.png'
-            count += 1
+            nome_arquivo_foto = f'Bases_Rede/{arq}/Previsao_{arq}_{count_fot}.png'
+            count_fot += 1
     else:
         plt.savefig(f'Bases_Rede/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  
         
     plt.savefig(nome_arquivo_foto, dpi=300, bbox_inches='tight')
-    # plt.savefig(f'Bases_Rede/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução
+    # plt.savefig(f'Bases_Rede/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução   
 
-    
-
-    # Verificar se já existe um arquivo com o mesmo nome, e incrementa um número se necessário
-    
-
-    plt.show()
+    # plt.show()
 

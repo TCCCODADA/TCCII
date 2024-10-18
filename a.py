@@ -1,0 +1,195 @@
+import numpy as np                  # Biblioteca para manipulação de arrays e operações matemáticas eficientes.
+import pandas as pd                 # Biblioteca para manipulação e análise de dados, especialmente útil para trabalhar com dados em tabelas (DataFrames).
+import matplotlib.pyplot as plt     # Biblioteca para criar gráficos e visualizações de dados.
+import tensorflow as tf             # Biblioteca para construir e treinar redes neurais e outros modelos de Machine Learning.
+import sklearn                      # Biblioteca para tarefas de Machine Learning, incluindo pré-processamento de dados, modelos e métricas de avaliação.
+
+from tensorflow.keras.models import Sequential                                  # Classe para criar um modelo sequencial (camada a camada) de rede neural.
+from tensorflow.keras.layers import Dense, Dropout, LSTM                        # Importa camadas para a rede neural. Dense cria uma camada totalmente conectada, Dropout ajuda a prevenir overfitting, e LSTM é uma camada recorrente utilizada para processamento de sequências (útil em séries temporais).
+from sklearn.preprocessing import MinMaxScaler                                  # Classe para normalizar os dados, escalando-os para um intervalo entre 0 e 1, útil para melhorar o desempenho dos modelos.
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score   # Importa as funções mean_absolute_error (MAE): Erro Médio Absoluto, média dos erros absolutos.
+                                                                                # mean_squared_error (MSE): Erro Quadrático Médio, média dos erros ao quadrado.
+                                                                                # r2_score (R²): Coeficiente de Determinação, mede a qualidade do ajuste do modelo.
+
+import os
+
+caminho_pasta = 'Base_dados'
+lista_arquivos = [arquivo for arquivo in os.listdir(caminho_pasta) if os.path.isfile(os.path.join(caminho_pasta, arquivo))]
+
+for arq in lista_arquivos:
+    # Carregar dados
+    df = pd.read_csv(f'Base_dados/{arq}', parse_dates=['Date'])
+    df = df.sort_values('Date')
+
+    # Calcular o índice para dividir a base
+    tot_linhas = len(df)
+    indice_divisao = int(tot_linhas * 0.7)
+
+    # Dividir a base de dados
+    base_70 = df.iloc[:indice_divisao]
+    base_30 = df.iloc[indice_divisao:]
+
+    # Salvar os primeiros 70% em outro arquivo CSV
+    if os.path.exists(f'Bases_Rede/{arq}/{arq}_Training.csv'):
+        os.remove(f'Bases_Rede/{arq}/{arq}_Training.csv')
+    base_70.to_csv(f'Bases_Rede/{arq}/{arq}_Training.csv', index=False)
+
+    # Salvar os últimos 30% em um novo arquivo CSV
+    if os.path.exists(f'Bases_Rede/{arq}/{arq}_Test.csv'):
+        os.remove(f'Bases_Rede/{arq}/{arq}_Test.csv')
+    base_30.to_csv(f'Bases_Rede/{arq}/{arq}_Test.csv', index=False)
+
+    base = pd.read_csv(f'Bases_Rede/{arq}/{arq}_Training.csv')
+
+    # Coluna "OPEN" será utilizada para realizar as previsões
+    base_treinamento = base.iloc[:, 1:2].values
+
+    # Pré-Processamento - Normalizar valores
+    normalizador = MinMaxScaler(feature_range=(0, 1))
+    base_treinamento_normalizada = normalizador.fit_transform(base_treinamento)
+
+    X = [] # Previsores
+    y = [] # Preços Reais
+
+    for i in range(90, len(base_treinamento_normalizada)):  # 90 Preços Anteriores para prever o preço atual
+        X.append(base_treinamento_normalizada[i - 90:i, 0])
+        y.append(base_treinamento_normalizada[i, 0])
+
+    X, y = np.array(X), np.array(y)
+
+    # ===== ESTRUTURA DA REDE NEUREAL RECORRENTE===== #
+    regressor = Sequential()
+
+    # 1° Camada de LSTM
+    regressor.add(LSTM(units=100, return_sequences=True, input_shape=(X.shape[1], 1)))
+    regressor.add(Dropout(0.3))
+
+    # 2° Camada de LSTM
+    regressor.add(LSTM(units=50, return_sequences=True))
+    regressor.add(Dropout(0.3))
+
+    # 3° Camada de LSTM
+    regressor.add(LSTM(units=50, return_sequences=True))
+    regressor.add(Dropout(0.3))
+
+    # 4° e Última Camada de LSTM
+    regressor.add(LSTM(units=50))
+    regressor.add(Dropout(0.3))
+
+    # Camada Dense (Totalmente Conectada)
+    regressor.add(Dense(units=1, activation='linear'))
+
+    # Compilação do modelo
+    regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
+
+    # Treinamento
+    print(f"\nIniciando Treinamento: {arq} - {lista_arquivos[arq+1]}")
+    regressor.fit(X, y, epochs=20, batch_size=32)
+
+
+    # ===== PREVISÕES DOS PREÇOS DAS AÇÕES ===== #
+    base_teste = pd.read_csv(f'Bases_Rede/{arq}/{arq}_Test.csv')
+    y_teste = base_teste.iloc[:, 1:2].values
+
+    # Juntando as duas bases em uma só
+    base_completa = pd.concat((base['Open'], base_teste['Open']), axis=0)
+    entradas = base_completa[len(base_completa) - len(base_teste) - 90:].values
+
+    # Preparação dos dados de entrada
+    entradas_novo = entradas.reshape(-1, 1)
+    entradas_novo = normalizador.transform(entradas_novo)
+
+    X_teste = []
+    
+    for i in range(90, len(entradas_novo)):
+        X_teste.append(entradas_novo[i - 90:i, 0])
+
+    X_teste = np.array(X_teste)
+    X_teste = np.reshape(X_teste, (X_teste.shape[0], X_teste.shape[1], 1))
+
+    # Calcula Previsão
+    previsoes = regressor.predict(X_teste)
+    previsoes = normalizador.inverse_transform(previsoes)
+
+    # Evitando divisão por zero
+    y_teste = np.where(y_teste == 0, 1e-10, y_teste)
+
+    # 1. Mean Absolute Error (MAE)
+    mae = mean_absolute_error(y_teste, previsoes)
+    print(f"{arq} - Erro Médio Absoluto - Mean Absolute Error (MAE): {mae}")
+
+    # 2. Mean Squared Error (MSE)
+    mse = mean_squared_error(y_teste, previsoes)
+    print(f"{arq} - Erro Quadrático Médio - Mean Squared Error (MSE): {mse}")
+
+    # 3. R² Score (Coeficiente de Determinação)
+    r2 = r2_score(y_teste, previsoes)
+    print(f"{arq} - Coeficiente de Determinação - R² Score: {r2}")
+
+    # 4. Mean Absolute Percentage Error (MAPE)
+    mape = np.mean(np.abs((y_teste - previsoes) / y_teste)) * 100
+    print(f"{arq} - Erro Percentual Absoluto Médio - Mean Absolute Percentage Error (MAPE): {mape:.2f}%")
+
+    # 5. Acurácia
+    acuracia = 100 - mape
+    print(f"{arq} - Acurácia: {acuracia:.2f}%")
+
+    # Salvando previsões e métricas em um arquivo CSV
+    resultados = pd.DataFrame({
+        'Preço Real': y_teste.flatten(),
+        'Preços Previstos': previsoes.flatten(),
+        'Erro Absoluto': np.abs(y_teste.flatten() - previsoes.flatten()),
+        'Erro Percentual': (np.abs(y_teste.flatten() - previsoes.flatten()) / y_teste.flatten()) * 100
+    })
+    if os.path.exists(f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv'):
+        os.remove(f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv')
+    resultados.to_csv(f'Bases_Rede/{arq}/Resultados_Previsoes_{arq}.csv', index=False)
+
+    plt.figure(figsize=(10, 6))  # Ajuste a largura para 10 e altura para 6
+    plt.plot(base_teste['Date'], y_teste, color= 'blue', label= 'Preço Real')
+    plt.plot(base_teste['Date'], previsoes, color= 'red', label= 'Preços Previstos')
+    plt.title(f"Previsões dos Preços das Ações {arq}")
+    plt.xlabel("Tempo")
+    plt.ylabel("Valor")
+    plt.legend(loc='upper left')  # Ajuste da posição da legenda para o canto superior esquerdo
+
+
+    # Adicionar texto com os indicadores
+    textstr = '\n'.join((
+        f"Erro Médio Absoluto (MAE): {mae:.4f}",
+        f"Erro Quadrático Médio (MSE): {mse:.4f}",
+        f"Coeficiente de Determinação (R²): {r2:.4f}",
+        f"Erro Percentual Absoluto Médio (MAPE): {mape:.2f}%",
+        f"Acurácia: {acuracia:.2f}%"
+    ))
+
+    # Definir a posição do texto no gráfico (mais ao lado para não sobrepor o gráfico)
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    plt.gca().text(1.05, 0.5, textstr, transform=plt.gca().transAxes, fontsize=10,
+                verticalalignment='center', bbox=props)
+
+    # Ajuste o layout para que tudo fique bem visível
+    plt.tight_layout()
+
+
+    nome_arquivo_foto = f'Bases_Rede/{arq}/Previsao_{arq}.png'
+    count = 1
+
+    # Salvar o gráfico em um arquivo
+    if os.path.exists(f'Bases_Rede/{arq}/Previsao_{arq}.png'):
+        while os.path.exists(nome_arquivo_foto):
+            nome_arquivo_foto = f'Bases_Rede/{arq}/Previsao_{arq}_{count}.png'
+            count += 1
+    else:
+        plt.savefig(f'Bases_Rede/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  
+        
+    plt.savefig(nome_arquivo_foto, dpi=300, bbox_inches='tight')
+    # plt.savefig(f'Bases_Rede/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução
+
+    
+
+    # Verificar se já existe um arquivo com o mesmo nome, e incrementa um número se necessário
+    
+
+    plt.show()
+

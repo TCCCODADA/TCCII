@@ -6,7 +6,7 @@ import tensorflow as tf             # Biblioteca para construir e treinar redes 
 import sklearn                      # Biblioteca para tarefas de Machine Learning, incluindo pré-processamento de dados, modelos e métricas de avaliação.
 
 from tensorflow.keras.models import Sequential                                  # Classe para criar um modelo sequencial (camada a camada) de rede neural.
-from tensorflow.keras.layers import Dense, Dropout, LSTM                        # Importa camadas para a rede neural. Dense cria uma camada totalmente conectada, Dropout ajuda a prevenir overfitting, e LSTM é uma camada recorrente utilizada para processamento de sequências (útil em séries temporais).
+from tensorflow.keras.layers import Dense, Dropout, Conv1D, Flatten                       # Importa camadas para a rede neural. Dense cria uma camada totalmente conectada, Dropout ajuda a prevenir overfitting, e LSTM é uma camada recorrente utilizada para processamento de sequências (útil em séries temporais).
 from sklearn.preprocessing import MinMaxScaler                                  # Classe para normalizar os dados, escalando-os para um intervalo entre 0 e 1, útil para melhorar o desempenho dos modelos.
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score   # Importa as funções mean_absolute_error (MAE): Erro Médio Absoluto, média dos erros absolutos.
                                                                                 # mean_squared_error (MSE): Erro Quadrático Médio, média dos erros ao quadrado.
@@ -22,6 +22,13 @@ for arq in lista_arquivos:
     df = pd.read_csv(f'Base_dados/{arq}', parse_dates=['Date'])
     df = df.sort_values('Date')
 
+    # Defina o caminho da nova pasta que você quer criar
+    caminho = f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}'
+
+    # Cria a pasta se ela não existir
+    if not os.path.exists(caminho):
+        os.makedirs(caminho)
+
     # Calcular o índice para dividir a base
     tot_linhas = len(df)
     indice_divisao = int(tot_linhas * 0.7)
@@ -31,16 +38,16 @@ for arq in lista_arquivos:
     base_30 = df.iloc[indice_divisao:]
 
     # Salvar os primeiros 70% em outro arquivo CSV
-    if os.path.exists(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv'):
-        os.remove(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv')
-    base_70.to_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv', index=False)
+    if os.path.exists(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Training.csv'):
+        os.remove(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Training.csv')
+    base_70.to_csv(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Training.csv', index=False)
 
     # Salvar os últimos 30% em um novo arquivo CSV
-    if os.path.exists(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv'):
-        os.remove(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv')
-    base_30.to_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv', index=False)
+    if os.path.exists(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Test.csv'):
+        os.remove(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Test.csv')
+    base_30.to_csv(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Test.csv', index=False)
 
-    base = pd.read_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv')
+    base = pd.read_csv(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Training.csv')
 
     # Coluna "OPEN" será utilizada para realizar as previsões
     base_treinamento = base.iloc[:, 1:2].values
@@ -61,28 +68,28 @@ for arq in lista_arquivos:
     # ===== ESTRUTURA DA REDE NEUREAL RECORRENTE===== #
     regressor = Sequential()
 
-    # 1° Camada de LSTM
-    regressor.add(LSTM(units=100, return_sequences=True, input_shape=(X.shape[1], 1)))
-    regressor.add(Dropout(0.3))
+    # 1ª Camada de Convolução 1D
+    regressor.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(X.shape[1], 1)))
+    regressor.add(Dropout(0.2))
 
-    # 2° Camada de LSTM
-    regressor.add(LSTM(units=50, return_sequences=True))
-    regressor.add(Dropout(0.3))
+    # 2ª Camada de Convolução 1D
+    regressor.add(Conv1D(filters=32, kernel_size=3, activation='relu'))
+    regressor.add(Dropout(0.2))
 
-    # 3° Camada de LSTM
-    regressor.add(LSTM(units=50, return_sequences=True))
-    regressor.add(Dropout(0.3))
+    # 3ª Camada de Convolução 1D
+    regressor.add(Conv1D(filters=16, kernel_size=3, activation='relu'))
+    regressor.add(Dropout(0.2))
 
-    # 4° e Última Camada de LSTM
-    regressor.add(LSTM(units=50))
-    regressor.add(Dropout(0.3))
+    # Flatten para achatar a saída da Conv1D
+    regressor.add(Flatten())
 
     # Camada Dense (Totalmente Conectada)
     regressor.add(Dense(units=1, activation='linear'))
 
     camadas = []
-    camadas.append("LSTM")
+    camadas.append("Conv1D")
     camadas.append("Dropout")
+    camadas.append("Flatten")
     camadas.append("Dense")
 
     # Compilação do modelo
@@ -90,12 +97,16 @@ for arq in lista_arquivos:
 
     # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
-    treinamento = regressor.fit(X, y, epochs=5, batch_size=32)
+    treinamento = regressor.fit(X, y, epochs=50, batch_size=32)
     epoca = len(treinamento.epoch)
+
+    # Acessando o valor do mean_absolute_error da última epoch
+    valor_mean_absolute_error = treinamento.history['mean_absolute_error'][-1]
+
 
 
     # ========== PREVISÕES DOS PREÇOS DAS AÇÕES ========== #
-    base_teste = pd.read_csv(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv')
+    base_teste = pd.read_csv(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/{arq}_Test.csv')
     y_teste = base_teste.iloc[:, 1:2].values
 
     # Juntando as duas bases em uma só
@@ -141,6 +152,9 @@ for arq in lista_arquivos:
     acuracia = 100 - mape
     print(f"{arq} - Acurácia: {acuracia:.2f}%")
 
+    # 6. Mean Absolute Error
+    print(f'Mean Absolute Error da Última Epoch: {valor_mean_absolute_error:.4f}')
+
     # Garantir que a coluna 'Date' esteja no formato datetime
     base_teste['Date'] = pd.to_datetime(base_teste['Date'])
 
@@ -165,7 +179,8 @@ for arq in lista_arquivos:
         f"MSE - Erro Quadrático Médio: {mse:.4f}",
         f"R² - Coeficiente de Determinação: {r2:.4f}",
         f"MAPE - Erro Percentual Absoluto Médio: {mape:.2f}%",
-        f"Acurácia: {acuracia:.2f}%"
+        f"Acurácia: {acuracia:.2f}%",
+        f'Mean Absolute Error da Última Epoch: {valor_mean_absolute_error:.4f}'
     ))
 
     # Definir a posição do texto no gráfico (mais ao lado para não sobrepor o gráfico)
@@ -191,27 +206,28 @@ for arq in lista_arquivos:
         'Coeficiente de Determinação (R²)': r2,
         'Erro Percentual Absoluto Médio (MAPE) (%)': mape,
         'Acurácia (%)': acuracia,
-        'Valores Iguais?': igual_ou_nao.flatten()
+        'Valores Iguais?': igual_ou_nao.flatten(),
+        'Mean Absolute Error da Última Epoch': valor_mean_absolute_error
     })
 
-    nome_arquivo_resultado = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}.csv'
+    nome_arquivo_resultado = f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{camadas[3]}.csv'
     count_res = 1
 
     while os.path.exists(nome_arquivo_resultado):
-        nome_arquivo_resultado = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{count_res}.csv'
+        nome_arquivo_resultado = f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{camadas[3]}_{count_res}.csv'
         count_res += 1
 
     resultados.to_csv(nome_arquivo_resultado, index=False)
 
-    nome_arquivo_foto = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}.png'
+    nome_arquivo_foto = f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{camadas[3]}.png'
     count_fot = 1
 
     while os.path.exists(nome_arquivo_foto):
-        nome_arquivo_foto = f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{count_fot}.png'
+        nome_arquivo_foto = f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{camadas[3]}_{count_fot}.png'
         count_fot += 1
         
     plt.savefig(nome_arquivo_foto, dpi=300, bbox_inches='tight')
-    # plt.savefig(f'Bases_Rede/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução   
+    # plt.savefig(f'Bases_Rede/Resultados_Conv1d_Dropout_Flatten_Dense/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução   
 
     # plt.show()
 

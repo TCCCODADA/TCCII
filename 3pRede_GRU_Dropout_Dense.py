@@ -13,11 +13,16 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score   
                                                                                 # r2_score (R²): Coeficiente de Determinação, mede a qualidade do ajuste do modelo.
 
 import os
+import time
+
+tempo_inicial_total = time.time()
 
 caminho_pasta = 'Base_dados'
 lista_arquivos = [arquivo for arquivo in os.listdir(caminho_pasta) if os.path.isfile(os.path.join(caminho_pasta, arquivo))]
 
 for arq in lista_arquivos:
+    tempo_inicial_loop = time.time()
+
     # Carregar dados
     df = pd.read_csv(f'Base_dados/{arq}', parse_dates=['Date'])
     df = df.sort_values('Date')
@@ -97,7 +102,7 @@ for arq in lista_arquivos:
 
     # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
-    treinamento = regressor.fit(X, y, epochs=5, batch_size=32)
+    treinamento = regressor.fit(X, y, epochs=550, batch_size=32)
     epoca = len(treinamento.epoch)
 
     # Acessando o valor do mean_absolute_error da última epoch
@@ -152,7 +157,7 @@ for arq in lista_arquivos:
     print(f"{arq} - Acurácia: {acuracia:.2f}%")
 
     # 6. Mean Absolute Error
-    print(f'Mean Absolute Error da Última Epoch: {valor_mean_absolute_error:.4f}')
+    print(f'{arq} - Mean Absolute Error da Última Epoch: {valor_mean_absolute_error:.4f}')
 
     # Garantir que a coluna 'Date' esteja no formato datetime
     base_teste['Date'] = pd.to_datetime(base_teste['Date'])
@@ -171,6 +176,11 @@ for arq in lista_arquivos:
 
     plt.legend(loc='upper left')  # Ajuste da posição da legenda para o canto superior esquerdo
 
+    # Calculando o tempo de execução do loop atual
+    tempo_final_loop = time.time()
+    tempo_total_loop = tempo_final_loop - tempo_inicial_loop
+    print(f"{arq} - Tempo de Execução: {tempo_total_loop:.2f} seg.\n")
+
 
     # Adicionar texto com os indicadores
     textstr = '\n'.join((
@@ -179,7 +189,8 @@ for arq in lista_arquivos:
         f"R² - Coeficiente de Determinação: {r2:.4f}",
         f"MAPE - Erro Percentual Absoluto Médio: {mape:.2f}%",
         f"Acurácia: {acuracia:.2f}%",
-        f'Mean Absolute Error da Última Epoch: {valor_mean_absolute_error:.4f}'
+        f'Mean Absolute Error da Última Epoch: {valor_mean_absolute_error:.4f}',
+        f'Tempo de Execução: {tempo_total_loop:.2f} seg.'
     ))
 
     # Definir a posição do texto no gráfico (mais ao lado para não sobrepor o gráfico)
@@ -206,7 +217,8 @@ for arq in lista_arquivos:
         'Erro Percentual Absoluto Médio (MAPE) (%)': mape,
         'Acurácia (%)': acuracia,
         'Valores Iguais?': igual_ou_nao.flatten(),
-        'Mean Absolute Error da Última Epoch': valor_mean_absolute_error
+        'Mean Absolute Error da Última Epoch': valor_mean_absolute_error,
+        'Tempo de Execução': tempo_total_loop
     })
 
     nome_arquivo_resultado = f'Bases_Rede/Resultados_GRU_Dropout_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}.csv'
@@ -230,3 +242,7 @@ for arq in lista_arquivos:
 
     # plt.show()
 
+# Calculando o tempo total de execução de todos os loops
+tempo_final_total = time.time()
+tempo_execucao_total = (tempo_final_total - tempo_inicial_total) / 60
+print(f"Tempo Total de execução: {tempo_execucao_total:.2f} Minutos.")

@@ -100,6 +100,7 @@ for arq in lista_arquivos:
     # Compilação do modelo
     regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
 
+
     # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
     treinamento = regressor.fit(X, y, epochs=500, batch_size=32)

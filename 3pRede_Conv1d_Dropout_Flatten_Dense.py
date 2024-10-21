@@ -103,7 +103,7 @@ for arq in lista_arquivos:
 
     # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
-    treinamento = regressor.fit(X, y, epochs=5000, batch_size=32)
+    treinamento = regressor.fit(X, y, epochs=10, batch_size=32)
     epoca = len(treinamento.epoch)
 
     # Acessando o valor do mean_absolute_error da última epoch

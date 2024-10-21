@@ -1,12 +1,15 @@
+# !pip install numpy pandas matplotlib scikit-learn tensorflow keras shap
+
 import numpy as np                  # Biblioteca para manipulação de arrays e operações matemáticas eficientes.
 import pandas as pd                 # Biblioteca para manipulação e análise de dados, especialmente útil para trabalhar com dados em tabelas (DataFrames).
 import matplotlib.pyplot as plt     # Biblioteca para criar gráficos e visualizações de dados.
 import matplotlib.dates as mdates   # Biblioteca para manipulação e formatação de datas e tempos em gráficos matplotlib.
 import tensorflow as tf             # Biblioteca para construir e treinar redes neurais e outros modelos de Machine Learning.
 import sklearn                      # Biblioteca para tarefas de Machine Learning, incluindo pré-processamento de dados, modelos e métricas de avaliação.
+import shap                         # Biblioteca para explicar previsões de modelos de Machine Learning de forma interpretável.
 
 from tensorflow.keras.models import Sequential                                  # Classe para criar um modelo sequencial (camada a camada) de rede neural.
-from tensorflow.keras.layers import Dense, Dropout, GRU                        # Importa camadas para a rede neural. Dense cria uma camada totalmente conectada, Dropout ajuda a prevenir overfitting, e LSTM é uma camada recorrente utilizada para processamento de sequências (útil em séries temporais).
+from tensorflow.keras.layers import Dense, Dropout, GRU                         # Importa camadas para a rede neural. Dense cria uma camada totalmente conectada, Dropout ajuda a prevenir overfitting, e LSTM é uma camada recorrente utilizada para processamento de sequências (útil em séries temporais).
 from sklearn.preprocessing import MinMaxScaler                                  # Classe para normalizar os dados, escalando-os para um intervalo entre 0 e 1, útil para melhorar o desempenho dos modelos.
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score   # Importa as funções mean_absolute_error (MAE): Erro Médio Absoluto, média dos erros absolutos.
                                                                                 # mean_squared_error (MSE): Erro Quadrático Médio, média dos erros ao quadrado.

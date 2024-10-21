@@ -1,9 +1,12 @@
+# !pip install numpy pandas matplotlib scikit-learn tensorflow keras shap
+
 import numpy as np                  # Biblioteca para manipulação de arrays e operações matemáticas eficientes.
 import pandas as pd                 # Biblioteca para manipulação e análise de dados, especialmente útil para trabalhar com dados em tabelas (DataFrames).
 import matplotlib.pyplot as plt     # Biblioteca para criar gráficos e visualizações de dados.
 import matplotlib.dates as mdates   # Biblioteca para manipulação e formatação de datas e tempos em gráficos matplotlib.
 import tensorflow as tf             # Biblioteca para construir e treinar redes neurais e outros modelos de Machine Learning.
 import sklearn                      # Biblioteca para tarefas de Machine Learning, incluindo pré-processamento de dados, modelos e métricas de avaliação.
+import shap                         # Biblioteca para explicar previsões de modelos de Machine Learning de forma interpretável.
 
 from tensorflow.keras.models import Sequential                                  # Classe para criar um modelo sequencial (camada a camada) de rede neural.
 from tensorflow.keras.layers import Dense, Dropout, LSTM                        # Importa camadas para a rede neural. Dense cria uma camada totalmente conectada, Dropout ajuda a prevenir overfitting, e LSTM é uma camada recorrente utilizada para processamento de sequências (útil em séries temporais).
@@ -103,8 +106,9 @@ for arq in lista_arquivos:
 
     # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
-    treinamento = regressor.fit(X, y, epochs=500, batch_size=32)
+    treinamento = regressor.fit(X, y, epochs=5, batch_size=32)
     epoca = len(treinamento.epoch)
+
 
     # Acessando o valor do mean_absolute_error da última epoch
     valor_mean_absolute_error = treinamento.history['mean_absolute_error'][-1]

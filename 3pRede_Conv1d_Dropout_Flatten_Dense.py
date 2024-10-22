@@ -73,7 +73,7 @@ for arq in lista_arquivos:
 
     X, y = np.array(X), np.array(y)
 
-    # ===== ESTRUTURA DA REDE NEUREAL RECORRENTE===== #
+    # ===== ESTRUTURA DA REDE NEUREAL CONVOLUCIONAL ===== #
     regressor = Sequential()
 
     # 1ª Camada de Convolução 1D
@@ -109,9 +109,9 @@ for arq in lista_arquivos:
     treinamento = regressor.fit(X, y, epochs=10, batch_size=32)
     epoca = len(treinamento.epoch)
 
+
     # Acessando o valor do mean_absolute_error da última epoch
     valor_mean_absolute_error = treinamento.history['mean_absolute_error'][-1]
-
 
 
     # ========== PREVISÕES DOS PREÇOS DAS AÇÕES ========== #

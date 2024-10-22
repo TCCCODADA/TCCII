@@ -109,6 +109,7 @@ for arq in lista_arquivos:
     treinamento = regressor.fit(X, y, epochs=550, batch_size=32)
     epoca = len(treinamento.epoch)
 
+
     # Acessando o valor do mean_absolute_error da última epoch
     valor_mean_absolute_error = treinamento.history['mean_absolute_error'][-1]
 

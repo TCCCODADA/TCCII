@@ -11,28 +11,28 @@ def hist_data(data_inicio, data_fim, lista_acoes): # FUNCAO PARA OBTERMOS OS DAD
         data = yf.download(acao, start=data_inicio, end=data_fim) # baixa os dados historicos das acoes colocadas na lista "lista_acoes"
 
         data_df_pandas = pd.DataFrame(data) # transforma os dados baixados em um DataFrame pandas para podermos transforma-lo em um csv            
-        data_df_pandas.to_csv("Base_dados/hist_"+acao) # transformando o df em um csv e salvando na pasta "Dados historicos"
+        data_df_pandas.to_csv(f"Base_dados/hist_{acao}.csv") # transformando o df em um csv e salvando na pasta "Dados historicos"
 
 # SMA
 def MM_sma(lista_acoes):
 
     for acao in lista_acoes:
-        df_sma = pd.read_csv("Base_dados/hist_"+acao)
+        df_sma = pd.read_csv(f"Base_dados/hist_{acao}.csv")
         df_sma = df_sma.set_index("Date")    
         df_sma.ta.sma(length = 10,
                       append = True) # calculando o 'SMA' onde o parametro lenght demonstra quando periodos para tras utilizaremos para calcula a média móvel
 
-        df_sma.to_csv("Base_dados/hist_"+acao) # transformando o df em um csv e salvando na pasta "Dados historicos"
+        df_sma.to_csv(f"Base_dados/hist_{acao}.csv") # transformando o df em um csv e salvando na pasta "Dados historicos"
 
 # EMA
 def MM_ema(lista_acoes): # EMA tambem conhecida como Media Movel Exponencial
 
     for acao in lista_acoes:
-        df_ema = pd.read_csv("Base_dados/hist_"+acao)
+        df_ema = pd.read_csv(f"Base_dados/hist_{acao}.csv")
         df_ema.ta.ema(lenght = 10,
                       append = True)
         
-        df_ema.to_csv("Base_dados/hist_"+acao)
+        df_ema.to_csv(f"Base_dados/hist_{acao}.csv")
 
 # RSI
 def MM_rsi(lista_acoes): # AQUI OBTEMOS O INDICADOR RSI (RELATIVE STRENGTH INDEX ou INDICE DE FORCA RELATIVA)
@@ -42,12 +42,12 @@ def MM_rsi(lista_acoes): # AQUI OBTEMOS O INDICADOR RSI (RELATIVE STRENGTH INDEX
     """
 
     for acao in lista_acoes:
-        df_rsi = pd.read_csv("Base_dados/hist_"+acao)
+        df_rsi = pd.read_csv(f"Base_dados/hist_{acao}.csv")
         df_rsi["RSI_10"] = ta.rsi(close = df_rsi["Close"], # UTILIZA A COLUNA DE FECHAMENTO
                                 length = 10,
                                 append = True)
     
-        df_rsi.to_csv("Base_dados/hist_"+acao)
+        df_rsi.to_csv(f"Base_dados/hist_{acao}.csv")
 
 # MACD
 def MM_macd(lista_acoes):
@@ -57,8 +57,8 @@ def MM_macd(lista_acoes):
     signal_window = 9
 
     for acao in lista_acoes:
-        df = pd.read_csv("Base_dados/hist_"+acao)     
-        df_MM_MACD = pd.read_csv("Base_dados/hist_"+acao)  
+        df = pd.read_csv(f"Base_dados/hist_{acao}.csv")     
+        df_MM_MACD = pd.read_csv(f"Base_dados/hist_{acao}.csv")  
 
         #Cálculo das EMAs de curto e longo prazo
         df_MM_MACD['EMA12'] = df['Close'].ewm(span=short_window, adjust=False).mean()
@@ -81,13 +81,13 @@ def MM_macd(lista_acoes):
         df['MACD_Histogram'] = df['MACD'] - df_MM_MACD['Signal_Line']
 
 
-        df.to_csv("Base_dados/hist_"+acao)      
+        df.to_csv(f"Base_dados/hist_{acao}.csv")      
 
 # Bollinger Bands
 def MM_bb(lista_acoes): # BOLINGER BANDS nos ajuda a medir a volatilidade do ativo
 
     for acao in lista_acoes:
-        df_bb = pd.read_csv("Base_dados/hist_"+acao)   
+        df_bb = pd.read_csv(f"Base_dados/hist_{acao}.csv")   
         
         df_bb.ta.bbands(close = df_bb['Close'],
                                 length = 20,
@@ -107,27 +107,27 @@ def MM_bb(lista_acoes): # BOLINGER BANDS nos ajuda a medir a volatilidade do ati
               DA FAIXA BBU - BBL
         """
         
-        df_bb.to_csv("Base_dados/hist_"+acao)
+        df_bb.to_csv(f"Base_dados/hist_{acao}.csv")
 
 # Average True Range
 def MM_atr(lista_acoes): # AVERAGE TRUE RANGE (ATR) nos mostra a volatilidade de um ativo em um determinado periodo (HIGH vs LOW de um dia)
 
     for acao in lista_acoes:
-        df_rsi = pd.read_csv("Base_dados/hist_"+acao)
+        df_rsi = pd.read_csv(f"Base_dados/hist_{acao}.csv")
         df_rsi.ta.atr(high = df_rsi['High'],
                       low = df_rsi['Low'],
                       close = df_rsi['Close'],
                       lenght = 10,
                       append = True)
 
-        df_rsi.to_csv("Base_dados/hist_"+acao)
+        df_rsi.to_csv(f"Base_dados/hist_{acao}.csv")
 
 
 # Estocastico
 def MM_estc(lista_acoes): # AQUI OBTEMOS O INDICADOR ESTOCASTICO, GERANDO DUAS COLUNAS
 
     for acao in lista_acoes:
-        df_estc = pd.read_csv("Base_dados/hist_"+acao)
+        df_estc = pd.read_csv(f"Base_dados/hist_{acao}.csv")
         stoch = ta.stoch(high=df_estc['High'],
                         low = df_estc['Low'],
                         close = df_estc['Close'],
@@ -137,4 +137,4 @@ def MM_estc(lista_acoes): # AQUI OBTEMOS O INDICADOR ESTOCASTICO, GERANDO DUAS C
         df_estc['stoch_k'] = stoch["STOCHk_14_3_3"] # COLOCAMOS ESSES VALORES NO DF DA ACAO
         df_estc['stoch_d'] = stoch["STOCHd_14_3_3"]
         
-        df_estc.to_csv("Base_dados/hist_"+acao)
+        df_estc.to_csv(f"Base_dados/hist_{acao}.csv")

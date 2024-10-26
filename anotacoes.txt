@@ -1,0 +1,58 @@
+Testes pra fazer
+VER RESULTADOS DESSES TESTES
+========== CONV1D ========== rodando 10x 15, rodando2x 5x 50
+BBAS3
+100 200 500
+
+EA
+100 300
+
+NFLX
+100 200 300 400 500 
+
+NVDA
+200 400 500 1100 2000
+
+PETR4
+1100
+
+TAEE11
+300 400 
+
+========== GRU ========== rodando 5x 15 fazer mais um desse
+BBAS3
+15 30 50 100 200 300 500
+
+EA
+50 200 300
+
+NFLX
+50 100 300 400 500
+
+NVDA
+50 100
+
+PETR4
+15 100 400 500
+
+TAEE11
+100 300 400 500
+
+========== LSTM ========== rodando 5x 15 fazer mais um desse
+BBAS3
+15 50 100 200 300 500
+
+EA
+50 200 300 400 500
+
+NFLX
+15 50 200 300 400 500
+
+NVDA
+50 100 
+
+PETR4
+50 300
+
+TAEE11
+50 400 500

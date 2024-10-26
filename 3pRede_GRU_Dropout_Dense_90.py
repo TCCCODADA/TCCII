@@ -106,7 +106,7 @@ for arq in lista_arquivos:
 
     # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
-    treinamento = regressor.fit(X, y, epochs=400, batch_size=32)
+    treinamento = regressor.fit(X, y, epochs=100, batch_size=32)
     epoca = len(treinamento.epoch)
 
 

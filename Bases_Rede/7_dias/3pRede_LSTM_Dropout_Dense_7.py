@@ -22,6 +22,9 @@ tempo_inicial_total = time.time()
 
 caminho_pasta = 'Base_dados'
 lista_arquivos = [arquivo for arquivo in os.listdir(caminho_pasta) if os.path.isfile(os.path.join(caminho_pasta, arquivo))]
+dias = 7
+acuracias = {}
+
 
 for arq in lista_arquivos:
     tempo_inicial_loop = time.time()
@@ -30,8 +33,10 @@ for arq in lista_arquivos:
     df = pd.read_csv(f'Base_dados/{arq}', parse_dates=['Date'])
     df = df.sort_values('Date')
 
+    arq = arq[:-4]
+
     # Defina o caminho da nova pasta que você quer criar
-    caminho = f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}'
+    caminho = f'Bases_Rede/{dias}_dias/Resultados_LSTM_Dropout_Dense/{arq}'
 
     # Cria a pasta se ela não existir
     if not os.path.exists(caminho):
@@ -46,16 +51,16 @@ for arq in lista_arquivos:
     base_30 = df.iloc[indice_divisao:]
 
     # Salvar os primeiros 70% em outro arquivo CSV
-    if os.path.exists(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv'):
-        os.remove(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv')
-    base_70.to_csv(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv', index=False)
+    if os.path.exists(f'{caminho}/{arq}_Training.csv'):
+        os.remove(f'{caminho}/{arq}_Training.csv')
+    base_70.to_csv(f'{caminho}/{arq}_Training.csv', index=False)
 
     # Salvar os últimos 30% em um novo arquivo CSV
-    if os.path.exists(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv'):
-        os.remove(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv')
-    base_30.to_csv(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv', index=False)
+    if os.path.exists(f'{caminho}/{arq}_Test.csv'):
+        os.remove(f'{caminho}/{arq}_Test.csv')
+    base_30.to_csv(f'{caminho}/{arq}_Test.csv', index=False)
 
-    base = pd.read_csv(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Training.csv')
+    base = pd.read_csv(f'{caminho}/{arq}_Training.csv')
 
     # Coluna "OPEN" será utilizada para realizar as previsões
     base_treinamento = base.iloc[:, 1:2].values
@@ -67,8 +72,8 @@ for arq in lista_arquivos:
     X = [] # Previsores
     y = [] # Preços Reais
 
-    for i in range(7, len(base_treinamento_normalizada)):  # 7 Preços Anteriores para prever o preço atual
-        X.append(base_treinamento_normalizada[i - 7:i, 0])
+    for i in range(dias, len(base_treinamento_normalizada)):  # 7 Preços Anteriores para prever o preço atual
+        X.append(base_treinamento_normalizada[i - dias:i, 0])
         y.append(base_treinamento_normalizada[i, 0])
 
     X, y = np.array(X), np.array(y)
@@ -95,10 +100,6 @@ for arq in lista_arquivos:
     # Camada Dense (Totalmente Conectada)
     regressor.add(Dense(units=1, activation='linear'))
 
-    camadas = []
-    camadas.append("LSTM")
-    camadas.append("Dropout")
-    camadas.append("Dense")
 
     # Compilação do modelo
     regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
@@ -106,7 +107,7 @@ for arq in lista_arquivos:
 
     # ========== Treinamento ========== #
     print(f"\nIniciando Treinamento: {arq}")
-    treinamento = regressor.fit(X, y, epochs=5, batch_size=32)
+    treinamento = regressor.fit(X, y, epochs=15, batch_size=32)
     epoca = len(treinamento.epoch)
 
 
@@ -115,12 +116,12 @@ for arq in lista_arquivos:
 
 
     # ========== PREVISÕES DOS PREÇOS DAS AÇÕES ========== #
-    base_teste = pd.read_csv(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/{arq}_Test.csv')
+    base_teste = pd.read_csv(f'{caminho}/{arq}_Test.csv')
     y_teste = base_teste.iloc[:, 1:2].values
 
     # Juntando as duas bases em uma só
     base_completa = pd.concat((base['Open'], base_teste['Open']), axis=0)
-    entradas = base_completa[len(base_completa) - len(base_teste) - 7:].values
+    entradas = base_completa[len(base_completa) - len(base_teste) - dias:].values
 
     # Preparação dos dados de entrada
     entradas_novo = entradas.reshape(-1, 1)
@@ -128,8 +129,8 @@ for arq in lista_arquivos:
 
     X_teste = []
     
-    for i in range(7, len(entradas_novo)):
-        X_teste.append(entradas_novo[i - 7:i, 0])
+    for i in range(dias, len(entradas_novo)):
+        X_teste.append(entradas_novo[i - dias:i, 0])
 
     X_teste = np.array(X_teste)
     X_teste = np.reshape(X_teste, (X_teste.shape[0], X_teste.shape[1], 1))
@@ -226,24 +227,26 @@ for arq in lista_arquivos:
         'Tempo de Execução': tempo_total_loop
     })
 
-    nome_arquivo_resultado = f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}.csv'
+    nome_arquivo_resultado = f'{caminho}/Resultados_Previsoes_{arq}_{epoca}_LSTM_Dropout_Dense.csv'
     count_res = 1
 
     while os.path.exists(nome_arquivo_resultado):
-        nome_arquivo_resultado = f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/Resultados_Previsoes_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{count_res}.csv'
+        nome_arquivo_resultado = f'{caminho}/Resultados_Previsoes_{arq}_{epoca}_LSTM_Dropout_Dense_{count_res}.csv'
         count_res += 1
 
     resultados.to_csv(nome_arquivo_resultado, index=False)
 
-    nome_arquivo_foto = f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}.png'
+    nome_arquivo_foto = f'{caminho}/Previsao_{arq}_{epoca}_LSTM_Dropout_Dense.png'
     count_fot = 1
 
     while os.path.exists(nome_arquivo_foto):
-        nome_arquivo_foto = f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}_{epoca}_{camadas[0]}_{camadas[1]}_{camadas[2]}_{count_fot}.png'
+        nome_arquivo_foto = f'{caminho}/Previsao_{arq}_{epoca}_LSTM_Dropout_Dense_{count_fot}.png'
         count_fot += 1
         
     plt.savefig(nome_arquivo_foto, dpi=300, bbox_inches='tight')
-    # plt.savefig(f'Bases_Rede/7_dias/Resultados_LSTM_Dropout_Dense/{arq}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução   
+
+    acuracias[arq] = acuracia
+    # plt.savefig(f'{caminho}/Previsao_{arq}.png', dpi=300, bbox_inches='tight')  # Salva a imagem com alta resolução   
 
     # plt.show()
 
@@ -251,3 +254,5 @@ for arq in lista_arquivos:
 tempo_final_total = time.time()
 tempo_execucao_total = (tempo_final_total - tempo_inicial_total) / 60
 print(f"Tempo Total de execução: {tempo_execucao_total:.2f} Minutos.")
+for i, j in acuracias.items():
+    print(f'Teste {dias} Dias: {i} {j}\n')

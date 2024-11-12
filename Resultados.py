@@ -40,5 +40,17 @@ class Resultados:
             arquivo.write(f"Loss Epoch: {media.LossEpoch}\n")    
             arquivo.write(f"Temp: {media.Temp}\n")
 
-# Exemplo de uso da função
-# Resultados.calcular_e_escrever_media(lista_resultados, execucoes, dias, epocas, nome_arquivo)
+    @staticmethod
+    def tempExec(lista_resultados, dias, rede):
+        # Calculando a média para cada métrica
+        tempMedio = sum(r for r in lista_resultados) / len(lista_resultados)
+
+        # Abrindo o arquivo para escrever as médias
+        with open("TempoMed", "a") as arquivo:
+            # Escrevendo as médias no arquivo com o formato apropriado
+            arquivo.write("\n--- Novas Medias ---\n")
+            arquivo.write(f"{rede}\n")
+            arquivo.write(f"Dias: {dias}\n")
+            arquivo.write(f"Tempo medio: {tempMedio}\n")
+
+

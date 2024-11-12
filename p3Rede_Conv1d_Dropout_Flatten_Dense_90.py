@@ -34,6 +34,7 @@ class Conv1d:
         resultadosNVDA = []
         resultadosPETR4 = []
         resultadosTAEE11 = []
+        tempMedio = []
 
         for a in range(execucoes):
             for arq in lista_arquivos:
@@ -201,7 +202,7 @@ class Conv1d:
                 tempo_final_loop = time.time()
                 tempo_total_loop = tempo_final_loop - tempo_inicial_loop
                 print(f"{arq} - Tempo de Execução: {tempo_total_loop:.2f} seg.\n")
-
+                tempMedio.append(tempo_total_loop)
 
                 # Adicionar texto com os indicadores
                 textstr = '\n'.join((
@@ -295,3 +296,4 @@ class Conv1d:
         Resultados.calcular_e_escrever_media(resultadosNVDA, execucoes, dias, epocas, "resultadosNVDA", rede)
         Resultados.calcular_e_escrever_media(resultadosPETR4, execucoes, dias, epocas, "resultadosPETR4", rede)
         Resultados.calcular_e_escrever_media(resultadosTAEE11, execucoes, dias, epocas, "resultadosTAEE11", rede)
+        # Resultados.tempExec(tempMedio, dias, rede)

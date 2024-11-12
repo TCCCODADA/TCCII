@@ -1,0 +1,31 @@
+
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 3.649626692136129
+
+--- Novas Medias ---
+Conv1d
+Dias: 7
+Tempo medio: 3.490072329839071
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 18.469913442929585
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 22.01515845457713
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 12.36064875125885
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 14.007046858469645

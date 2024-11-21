@@ -1,4 +1,4 @@
-from p3Rede_GRU_Dropout_Dense_90 import Gru
+from mainModelos import Modelo
 
 BBAS3 = 'hist_BBAS3.csv'
 EA = 'hist_EA.csv'
@@ -10,7 +10,8 @@ TAEE11 = 'hist_TAEE11.csv'
 lista_arquivos2000 = [BBAS3, EA, NFLX, NVDA, PETR4, TAEE11]
 listinha = [BBAS3]
 
-Gru.GruCalcs(7, 5, 15, listinha)
-Gru.GruCalcs(90, 5, 15, listinha)
-Gru.GruCalcs(7, 5, 200, listinha)
-Gru.GruCalcs(90, 5, 200, listinha)
+Modelo.Calculos("GRU", 90, 1, 5, listinha)
+# Gru.GruCalcs(7, 5, 15, listinha)
+# Gru.GruCalcs(90, 5, 15, listinha)
+# Gru.GruCalcs(7, 5, 200, listinha)
+# Gru.GruCalcs(90, 5, 200, listinha)

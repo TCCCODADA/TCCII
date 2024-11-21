@@ -238,3 +238,33 @@ Tempo medio: 1850.4574526309966
 GRU
 Dias: 90
 Tempo medio: 1841.352083349228
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 34.059772968292236
+
+--- Novas Medias ---
+CONV1D
+Dias: 90
+Tempo medio: 4.148986101150513
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 35.57382869720459
+
+--- Novas Medias ---
+CONV1D
+Dias: 90
+Tempo medio: 5.285064697265625
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 42.2462694644928
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 47.53199362754822

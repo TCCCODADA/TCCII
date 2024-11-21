@@ -8,6 +8,9 @@ PETR4 = 'hist_PETR4.csv'
 TAEE11 = 'hist_TAEE11.csv'
 
 lista_arquivos2000 = [BBAS3, EA, NFLX, NVDA, PETR4, TAEE11]
+listinha = [BBAS3]
 
-Lstm.LstmCalcs(7, 1, 1, lista_arquivos2000)
-Lstm.LstmCalcs(90, 1, 1, lista_arquivos2000)
+Lstm.LstmCalcs(7, 5, 15, listinha)
+Lstm.LstmCalcs(90, 5, 15, listinha)
+Lstm.LstmCalcs(7, 5, 200, listinha)
+Lstm.LstmCalcs(90, 5, 200, listinha)

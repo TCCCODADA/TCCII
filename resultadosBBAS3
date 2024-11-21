@@ -460,3 +460,73 @@ Acuracia: 98.3414961374342
 Mean Absolute Erro Epoch: 0.026318239979445934
 Loss Epoch: 0.0013308163615874946
 Temp: 3332.3310865163803
+
+--- Novas Medias ---
+Conv1d
+Dias: 7
+Execucoes: 1
+Epocas: 1
+MAE: 1.3256634873366424
+MSE: 2.3557235506705196
+R: 0.8869233215635863
+MAPE: 5.689713302083314
+Acuracia: 94.31028669791668
+Mean Absolute Erro Epoch: 0.13465870916843414
+Loss Epoch: 0.03605206310749054
+Temp: 3.5642848014831543
+
+--- Novas Medias ---
+Conv1d
+Dias: 7
+Execucoes: 3
+Epocas: 2000
+MAE: 0.5043327502376597
+MSE: 0.47206911254754075
+R: 0.9773402922324618
+MAPE: 2.226713751200259
+Acuracia: 97.77328624879975
+Mean Absolute Erro Epoch: 0.03634554396073023
+Loss Epoch: 0.002666865009814501
+Temp: 289.9169924259186
+
+--- Novas Medias ---
+Conv1d
+Dias: 7
+Execucoes: 3
+Epocas: 200
+MAE: 0.0
+MSE: 0.0
+R: 0.0
+MAPE: 0.0
+Acuracia: 0.0
+Mean Absolute Erro Epoch: 0.0
+Loss Epoch: 0.0
+Temp: 0.0
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Execucoes: 1
+Epocas: 500
+MAE: 0.0
+MSE: 0.0
+R: 0.0
+MAPE: 0.0
+Acuracia: 0.0
+Mean Absolute Erro Epoch: 0.0
+Loss Epoch: 0.0
+Temp: 0.0
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Execucoes: 1
+Epocas: 550
+MAE: 0.38366523806077985
+MSE: 0.231901027597278
+R: 0.9888685589108164
+MAPE: 1.7362733692970929
+Acuracia: 98.2637266307029
+Mean Absolute Erro Epoch: 0.023816339671611786
+Loss Epoch: 0.0011091517517343163
+Temp: 3364.0910189151764

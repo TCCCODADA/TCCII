@@ -20,11 +20,11 @@ import os
 import time
 
 class Lstm:
-    def LstmCalcs (dias, execucoes, epocas):
+    def LstmCalcs (dias, execucoes, epocas, lista_arquivos):
         tempo_inicial_total = time.time()
 
         caminho_pasta = 'Base_dados'
-        lista_arquivos = [arquivo for arquivo in os.listdir(caminho_pasta) if os.path.isfile(os.path.join(caminho_pasta, arquivo))]
+        # lista_arquivos = [arquivo for arquivo in os.listdir(caminho_pasta) if os.path.isfile(os.path.join(caminho_pasta, arquivo))]
 
         acuracias = {}
 
@@ -292,10 +292,10 @@ class Lstm:
                 print(f'Teste {dias} Dias: {i} {j}\n')
 
         rede = "LSTM"
-        Resultados.calcular_e_escrever_media(resultadosBBAS3, execucoes, dias, epocas, "resultadosBBAS3", rede)
-        Resultados.calcular_e_escrever_media(resultadosEA, execucoes, dias, epocas, "resultadosEA", rede)
-        Resultados.calcular_e_escrever_media(resultadosNFLX, execucoes, dias, epocas, "resultadosNFLX", rede)
-        Resultados.calcular_e_escrever_media(resultadosNVDA, execucoes, dias, epocas, "resultadosNVDA", rede)
-        Resultados.calcular_e_escrever_media(resultadosPETR4, execucoes, dias, epocas, "resultadosPETR4", rede)
-        Resultados.calcular_e_escrever_media(resultadosTAEE11, execucoes, dias, epocas, "resultadosTAEE11", rede)
-        # Resultados.tempExec(tempMedio, dias, rede)
+        # Resultados.calcular_e_escrever_media(resultadosBBAS3, execucoes, dias, epocas, "resultadosBBAS3", rede)
+        # Resultados.calcular_e_escrever_media(resultadosEA, execucoes, dias, epocas, "resultadosEA", rede)
+        # Resultados.calcular_e_escrever_media(resultadosNFLX, execucoes, dias, epocas, "resultadosNFLX", rede)
+        # Resultados.calcular_e_escrever_media(resultadosNVDA, execucoes, dias, epocas, "resultadosNVDA", rede)
+        # Resultados.calcular_e_escrever_media(resultadosPETR4, execucoes, dias, epocas, "resultadosPETR4", rede)
+        # Resultados.calcular_e_escrever_media(resultadosTAEE11, execucoes, dias, epocas, "resultadosTAEE11", rede)
+        Resultados.tempExec(tempMedio, dias, rede)

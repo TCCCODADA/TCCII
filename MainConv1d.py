@@ -11,4 +11,4 @@ TAEE11 = 'hist_TAEE11.csv'
 lista_arquivos2000 = [BBAS3, EA, NFLX, NVDA, PETR4, TAEE11]
 
 #Conv1d.Conv1dCalcs(7, 1, 1, lista_arquivos2000)
-Conv1d.Conv1dCalcs(90, 1, 10, lista_arquivos2000)
+Conv1d.Conv1dCalcs(90, 2, 5, lista_arquivos2000)

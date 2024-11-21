@@ -37,6 +37,8 @@ class Conv1d:
         tempMedio = []
 
         for a in range(execucoes):
+            tempo_inicial_execucoes = time.time()
+            print(f"\nLoop {a+1}/{execucoes} ({dias} dias, {epocas} épocas)")
             for arq in lista_arquivos:
                 tempo_inicial_loop = time.time()
 
@@ -201,7 +203,8 @@ class Conv1d:
                 # Calculando o tempo de execução do loop atual
                 tempo_final_loop = time.time()
                 tempo_total_loop = tempo_final_loop - tempo_inicial_loop
-                print(f"{arq} - Tempo de Execução: {tempo_total_loop:.2f} seg.\n")
+                tempo_total_loop_min = tempo_total_loop / 60
+                print(f"{arq} - Tempo de Execução: {tempo_total_loop:.2f} seg / {tempo_total_loop_min:.2f} min.\n")
                 tempMedio.append(tempo_total_loop)
 
                 # Adicionar texto com os indicadores
@@ -282,13 +285,20 @@ class Conv1d:
 
                 # plt.show()
 
-            # Calculando o tempo total de execução de todos os loops
-            tempo_final_total = time.time()
-            tempo_execucao_total = (tempo_final_total - tempo_inicial_total) / 60
-            print(f"Tempo Total de execução: {tempo_execucao_total:.2f} Minutos.")
-            for i, j in acuracias.items():
-                print(f'Teste {dias} Dias: {i} {j}\n')
-
+            # Calculando o tempo total de execução de todos os loops dos arquivos
+            tempo_final_execucao = time.time()
+            tempo_total_execucao = tempo_final_execucao - tempo_inicial_execucoes
+            tempo_total_execucao_min = tempo_total_execucao / 60
+            print(f"Tempo Total de Execução {a+1}/{execucoes}: {tempo_total_execucao_min:.2f} Minutos / {tempo_total_execucao:.2f} Segundos.\n")
+            # for i, j in acuracias.items():
+            #     print(f'Teste {dias} Dias: {i} {j}\n')
+        
+        # Calculando o tempo total de execução de todos os loops de execução
+        tempo_final_total = time.time()
+        tempo_execucao_total = tempo_final_total - tempo_inicial_total
+        tempo_execucao_total_min = tempo_execucao_total / 60
+        print(f"Tempo Total da Execução dos Loops ({execucoes}): {tempo_execucao_total_min:.2f} Minutos / {tempo_execucao_total:.2f} Segundos.")
+        
         rede = "Conv1d"
         Resultados.calcular_e_escrever_media(resultadosBBAS3, execucoes, dias, epocas, "Media_Resultados/resultadosBBAS3.txt", rede)
         Resultados.calcular_e_escrever_media(resultadosEA, execucoes, dias, epocas, "Media_Resultados/resultadosEA.txt", rede)

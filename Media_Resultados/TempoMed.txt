@@ -33,3 +33,208 @@ Tempo medio: 12.480427742004395
 Conv1d
 Dias: 90
 Tempo medio: 5.431754390398662
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 29.387931632995606
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 27.7324321269989
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 117.29262518882751
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 131.5324501991272
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 188.02670030593873
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 197.51376876831054
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 4.0276298721631365
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 81.13307418823243
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 81.2280523777008
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 216.55343379974366
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 254.08299827575684
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 1489.221626329422
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 291.12063360214233
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 1738.8691212177278
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 283.29023189544677
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 1268.774302816391
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 1397.2670692920685
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 3.1334041158358255
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 2.7786967356999717
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 3.4630839228630066
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 2.785452882448832
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 3.6176790595054626
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 2.8180697162946067
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 3.0453845461209617
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 2.99132372935613
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 28.163747596740723
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 28.105470371246337
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 28.517727041244505
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 29.55898747444153
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 130.36340460777282
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 142.78675956726073
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 148.8297939300537
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 162.25199370384217
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 241.81780090332032
+
+--- Novas Medias ---
+LSTM
+Dias: 7
+Tempo medio: 240.43389029502868
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 250.66092557907103
+
+--- Novas Medias ---
+GRU
+Dias: 7
+Tempo medio: 256.37376136779784
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 1633.8799609184266
+
+--- Novas Medias ---
+LSTM
+Dias: 90
+Tempo medio: 1634.1366054534913
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 1850.4574526309966
+
+--- Novas Medias ---
+GRU
+Dias: 90
+Tempo medio: 1841.352083349228

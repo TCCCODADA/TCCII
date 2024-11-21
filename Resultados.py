@@ -31,14 +31,14 @@ class Resultados:
             arquivo.write(f"Dias: {dias}\n")
             arquivo.write(f"Execucoes: {execucoes}\n")
             arquivo.write(f"Epocas: {epocas}\n")
-            arquivo.write(f"MAE: {media.MAE}\n")
-            arquivo.write(f"MSE: {media.MSE}\n")
-            arquivo.write(f"R: {media.R}\n")
-            arquivo.write(f"MAPE: {media.MAPE}\n")
-            arquivo.write(f"Acuracia: {media.Acuracia}\n")
-            arquivo.write(f"Mean Absolute Erro Epoch: {media.MeanAbsoluteErrEpoch}\n")
-            arquivo.write(f"Loss Epoch: {media.LossEpoch}\n")    
-            arquivo.write(f"Temp: {media.Temp}\n")
+            arquivo.write(f"MAE: {media.MAE:.4f}\n")
+            arquivo.write(f"MSE: {media.MSE:.4f}\n")
+            arquivo.write(f"R: {media.R:.4f}\n")
+            arquivo.write(f"MAPE: {media.MAPE:.4f}\n")
+            arquivo.write(f"Acuracia: {media.Acuracia:.4f}\n")
+            arquivo.write(f"Mean Absolute Erro Epoch: {media.MeanAbsoluteErrEpoch:.4f}\n")
+            arquivo.write(f"Loss Epoch: {media.LossEpoch:.4f}\n")    
+            arquivo.write(f"Temp: {media.Temp:.4f}\n")
 
     @staticmethod
     def tempExec(lista_resultados, dias, rede):
@@ -52,5 +52,3 @@ class Resultados:
             arquivo.write(f"{rede}\n")
             arquivo.write(f"Dias: {dias}\n")
             arquivo.write(f"Tempo medio: {tempMedio}\n")
-
-

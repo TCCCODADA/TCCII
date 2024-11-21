@@ -268,3 +268,18 @@ Tempo medio: 42.2462694644928
 GRU
 Dias: 90
 Tempo medio: 47.53199362754822
+
+--- Novas Medias ---
+CONV1D
+Dias: 90
+Tempo medio: 2.9259299437204995
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 2.977699339389801
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Tempo medio: 2.9583542943000793

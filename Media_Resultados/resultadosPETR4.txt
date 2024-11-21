@@ -992,3 +992,45 @@ Acuracia: 0.0000
 Mean Absolute Erro Epoch: 0.0000
 Loss Epoch: 0.0000
 Temp: 0.0000
+
+--- Novas Medias ---
+CONV1D
+Dias: 90
+Execucoes: 2
+Epocas: 5
+MAE: 3.3299
+MSE: 16.8251
+R: 0.3361
+MAPE: 10.2397
+Acuracia: 89.7603
+Mean Absolute Erro Epoch: 0.0804
+Loss Epoch: 0.0120
+Temp: 2.7670
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Execucoes: 2
+Epocas: 5
+MAE: 2.5990
+MSE: 9.9284
+R: 0.6082
+MAPE: 7.9485
+Acuracia: 92.0515
+Mean Absolute Erro Epoch: 0.0815
+Loss Epoch: 0.0124
+Temp: 2.8838
+
+--- Novas Medias ---
+Conv1d
+Dias: 90
+Execucoes: 2
+Epocas: 5
+MAE: 2.8433
+MSE: 11.2376
+R: 0.5566
+MAPE: 8.6199
+Acuracia: 91.3801
+Mean Absolute Erro Epoch: 0.0804
+Loss Epoch: 0.0117
+Temp: 2.7755

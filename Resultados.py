@@ -46,7 +46,7 @@ class Resultados:
         tempMedio = sum(r for r in lista_resultados) / len(lista_resultados)
 
         # Abrindo o arquivo para escrever as médias
-        with open("TempoMed", "a") as arquivo:
+        with open("Media_Resultados/TempoMed.txt", "a") as arquivo:
             # Escrevendo as médias no arquivo com o formato apropriado
             arquivo.write("\n--- Novas Medias ---\n")
             arquivo.write(f"{rede}\n")

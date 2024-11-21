@@ -290,10 +290,10 @@ class Conv1d:
                 print(f'Teste {dias} Dias: {i} {j}\n')
 
         rede = "Conv1d"
-        # Resultados.calcular_e_escrever_media(resultadosBBAS3, execucoes, dias, epocas, "Media_Resultados/resultadosBBAS3", rede)
-        # Resultados.calcular_e_escrever_media(resultadosEA, execucoes, dias, epocas, "Media_Resultados/resultadosEA", rede)
-        # Resultados.calcular_e_escrever_media(resultadosNFLX, execucoes, dias, epocas, "Media_Resultados/resultadosNFLX", rede)
-        # Resultados.calcular_e_escrever_media(resultadosNVDA, execucoes, dias, epocas, "Media_Resultados/resultadosNVDA", rede)
-        # Resultados.calcular_e_escrever_media(resultadosPETR4, execucoes, dias, epocas, "Media_Resultados/resultadosPETR4", rede)
-        # Resultados.calcular_e_escrever_media(resultadosTAEE11, execucoes, dias, epocas, "Media_Resultados/resultadosTAEE11", rede)
+        Resultados.calcular_e_escrever_media(resultadosBBAS3, execucoes, dias, epocas, "Media_Resultados/resultadosBBAS3.txt", rede)
+        Resultados.calcular_e_escrever_media(resultadosEA, execucoes, dias, epocas, "Media_Resultados/resultadosEA.txt", rede)
+        Resultados.calcular_e_escrever_media(resultadosNFLX, execucoes, dias, epocas, "Media_Resultados/resultadosNFLX.txt", rede)
+        Resultados.calcular_e_escrever_media(resultadosNVDA, execucoes, dias, epocas, "Media_Resultados/resultadosNVDA.txt", rede)
+        Resultados.calcular_e_escrever_media(resultadosPETR4, execucoes, dias, epocas, "Media_Resultados/resultadosPETR4.txt", rede)
+        Resultados.calcular_e_escrever_media(resultadosTAEE11, execucoes, dias, epocas, "Media_Resultados/resultadosTAEE11.txt", rede)
         Resultados.tempExec(tempMedio, dias, rede)

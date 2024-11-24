@@ -4,4 +4,4 @@
 
 ## Orientado pelo Professor Doutor Reinaldo Bianchi.
 
-![Logo MarketMind](https://github.com/user-attachments/assets/3894bddc-b150-4091-8f40-d1218db15283)
+![Logo MarketMind](https://github.com/user-attachments/assets/61139e37-7d24-4ec4-b7f6-0ace54a99f90)

@@ -1,4 +1,4 @@
-# Trabalho de Conclusão de Curso da turma de Ciência da Computação do Centro Universitário da Fundação Educacional Inaciana (FEI-SBC).
+# Trabalho de Conclusão de Curso da Turma de Ciência da Computação do Centro Universitário da Fundação Educacional Inaciana (FEI-SBC).
 
 ## Projeto Desenvolvido por: Bruno Umeoka Higuti, Gabriel de Almeida Gava, Guilherme Bizon Jeronymo, Matheus Venâncio Scomparim e Gustavo Leite Bueno de Oliveira.
 
